@@ -48,6 +48,7 @@ public class FileCopy extends SwingWorker<Integer, Integer> {
 		}else{
 			schmitter.getProgressBar().setForeground(Color.GREEN);
 			schmitter.getProgressBar().setString("File transfer completed!");
+			Joke joke = new Joke();
 		}
 		
 	}
@@ -70,8 +71,7 @@ public class FileCopy extends SwingWorker<Integer, Integer> {
 
 			int length;
 			while ((length = is.read(buffer)) > 0) {
-				if(this.isCancelled()){
-					
+				if(this.isCancelled()){					
 					break;
 				}
 				
