@@ -7,12 +7,13 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 
 public class Schmitter {
 
 	private Schmitter schmitter = this;
-	private JFrame frmSchmitterV;
+	private JFrame SchmitterFrame;
 	private JTextField fromPathTextField;
 	private JTextField toPathTextField;
 	private JProgressBar progressBar;
@@ -35,43 +36,45 @@ public class Schmitter {
 	}
 
 	private void initialize() {
-		frmSchmitterV = new JFrame();
-		frmSchmitterV.setTitle("Schmitter - v2.0");
-		frmSchmitterV.setBounds(100, 100, 390, 180);
-		frmSchmitterV.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmSchmitterV.getContentPane().setLayout(null);
+		SchmitterFrame = new JFrame();
+		SchmitterFrame.setTitle("Schmitter - v2.0");
+		SchmitterFrame.setBounds(100, 100, 390, 180);
+		SchmitterFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		SchmitterFrame.getContentPane().setLayout(null);
 		
 		JLabel fromLabel = new JLabel("From");
 		fromLabel.setBounds(10, 16, 46, 14);
-		frmSchmitterV.getContentPane().add(fromLabel);
+		SchmitterFrame.getContentPane().add(fromLabel);
 		
 		JLabel toLabel = new JLabel("To");
 		toLabel.setBounds(10, 44, 46, 14);
-		frmSchmitterV.getContentPane().add(toLabel);
+		SchmitterFrame.getContentPane().add(toLabel);
 		
 		fromPathTextField = new JTextField();
 		fromPathTextField.setBounds(60, 11, 270, 20);
-		frmSchmitterV.getContentPane().add(fromPathTextField);
+		SchmitterFrame.getContentPane().add(fromPathTextField);
 		fromPathTextField.setColumns(10);
 		
 		toPathTextField = new JTextField();
 		toPathTextField.setColumns(10);
 		toPathTextField.setBounds(60, 41, 270, 20);
-		frmSchmitterV.getContentPane().add(toPathTextField);
+		SchmitterFrame.getContentPane().add(toPathTextField);
 		
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setBounds(10, 71, 356, 30);
-		frmSchmitterV.getContentPane().add(progressBar);
+		SchmitterFrame.getContentPane().add(progressBar);
 		
 		btnStart = new JButton("Copy");		
 		btnStart.setBounds(10, 111, 89, 23);
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				fileCopy = new FileCopy(fromPathTextField.getText(), toPathTextField.getText(), schmitter);
+				File from = new File(fromPathTextField.getText());
+				File to = new File(toPathTextField.getText());
+				fileCopy = new FileCopy(from, to, schmitter);
 				fileCopy.execute();
 			}
 		});
-		frmSchmitterV.getContentPane().add(btnStart);
+		SchmitterFrame.getContentPane().add(btnStart);
 		
 		btnStop = new JButton("Stop");		
 		btnStop.setEnabled(false);
@@ -81,7 +84,7 @@ public class Schmitter {
 				fileCopy.cancel(true);
 			}
 		});
-		frmSchmitterV.getContentPane().add(btnStop);
+		SchmitterFrame.getContentPane().add(btnStop);
 		
 		fc = new JFileChooser();
 		
@@ -96,7 +99,7 @@ public class Schmitter {
 				}
 			}
 		});
-		frmSchmitterV.getContentPane().add(filePickerFrom);
+		SchmitterFrame.getContentPane().add(filePickerFrom);
 		
 		JButton filePickerTo = new JButton("...");
 		filePickerTo.setBounds(338, 41, 30, 20);
@@ -109,12 +112,12 @@ public class Schmitter {
 				}				
 			}
 		});
-		frmSchmitterV.getContentPane().add(filePickerTo);
+		SchmitterFrame.getContentPane().add(filePickerTo);
 
 		
 		
 		
-		frmSchmitterV.setVisible(true);
+		SchmitterFrame.setVisible(true);
 	}
 
 	public JProgressBar getProgressBar() {

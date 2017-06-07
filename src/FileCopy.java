@@ -11,13 +11,13 @@ import javax.swing.SwingWorker;
 
 public class FileCopy extends SwingWorker<Integer, Integer> {
 
-	private String from;
-	private String to;
+	private File from;
+	private File to;
 	private float progress;
 
 	private Schmitter schmitter;
 
-	public FileCopy(String from, String to, Schmitter schmitter) {
+	public FileCopy(File from, File to, Schmitter schmitter) {
 		super();
 		this.from = from;
 		this.to = to;
@@ -62,11 +62,11 @@ public class FileCopy extends SwingWorker<Integer, Integer> {
 		GUIModifyStartCopy();			
 
 		try {
-			is = new FileInputStream(new File(from));
-			os = new FileOutputStream(new File(to));
+			is = new FileInputStream(from);
+			os = new FileOutputStream(to);
 			byte[] buffer = new byte[1024];
 
-			long fileSize = new File(from).length();
+			long fileSize = from.length();
 			long bytesWritten = 0;
 
 			int length;
