@@ -12,86 +12,103 @@ import javax.swing.SwingWorker;
 public class FileCopy extends SwingWorker<Integer, Integer> {
 
 	private File from;
-	private File to;
+	private String to;
 	private float progress;
-
 	private Schmitter schmitter;
+	JProgressBar progBar;
 
-	public FileCopy(File from, File to, Schmitter schmitter) {
+	public FileCopy(File from, String to, Schmitter schmitter) {
 		super();
 		this.from = from;
 		this.to = to;
 		this.schmitter = schmitter;
-	}
-	
-	private void GUIModifyStartCopy(){
-		schmitter.getFromPathTextField().setEnabled(false);
-		schmitter.getToPathTextField().setEnabled(false);
-		schmitter.getBtnStart().setEnabled(false);
-		schmitter.getBtnStop().setEnabled(true);		
-		schmitter.getProgressBar().setValue(0);
-		schmitter.getProgressBar().setString(null);
-		schmitter.getProgressBar().setStringPainted(true);
-		schmitter.getProgressBar().setForeground(Color.orange);
-		schmitter.getProgressBar().setIndeterminate(false);
-	}
-	
-	private void GUIModifyFinishedCopy(){
-		schmitter.getFromPathTextField().setEnabled(true);
-		schmitter.getToPathTextField().setEnabled(true);
-		schmitter.getBtnStart().setEnabled(true);
-		schmitter.getBtnStop().setEnabled(false);
+		progBar = schmitter.getCp().addCopyProgresses(this);
+		//this.execute();
 		
-		if(this.isCancelled()){
-			schmitter.getProgressBar().setForeground(Color.RED);
-			schmitter.getProgressBar().setString("File transfer stopped!");
-		}else{
-			schmitter.getProgressBar().setForeground(Color.GREEN);
-			schmitter.getProgressBar().setString("File transfer completed!");
-			Joke joke = new Joke();
+	}
+	
+	public File getFrom() {
+		return from;
+	}
+	
+	private void GUIStopped(){
+		progBar.setForeground(Color.RED);
+	}
+	
+	private void GUIFinished(){
+		progBar.setValue(100);
+		progBar.setForeground(Color.GREEN);		
+	}
+	
+	private boolean fileExist(){
+		if(schmitter.getChckbxNewCheckBox().isSelected()){
+			return false;
+		};
+		
+		File folder = new File(to);
+		File[] listOfFiles = folder.listFiles();
+		for(int i = 0; i < listOfFiles.length;i++) {
+			System.out.println(listOfFiles[i].getName());
+			if(listOfFiles[i].getName().equals(from.getName())){
+				System.out.println("Already exist!");
+				GUIFinished();
+				return true;
+			}
 		}
-		
+		return false;
 	}
 
 	@Override
 	protected Integer doInBackground() throws Exception {
 		InputStream is = null;
-		OutputStream os = null;
-		JProgressBar progBar = schmitter.getProgressBar();
-		
-		GUIModifyStartCopy();			
+		OutputStream os = null;			
 
-		try {
+		try {			
+			if(fileExist()){
+				return null;
+			};
+			
 			is = new FileInputStream(from);
-			os = new FileOutputStream(to);
+			os = new FileOutputStream(new File(to+'\\'+from.getName()));
+			
 			byte[] buffer = new byte[1024];
 
 			long fileSize = from.length();
 			long bytesWritten = 0;
+			
+			
 
 			int length;
+			int last = 0;
 			while ((length = is.read(buffer)) > 0) {
-				if(this.isCancelled()){					
+				if(this.isCancelled()){		
+					GUIStopped();
 					break;
 				}
 				
 				os.write(buffer, 0, length);
 				bytesWritten += length;
 
-				progress = bytesWritten * 100f / fileSize;
+				progress = bytesWritten * 100f / fileSize;	
+				if(last < (int) progress){
+					last = (int) progress;
+					System.out.println(from.toPath() + ": " + (int) progress);
+				}
+				
 				progBar.setValue((int) progress);
+				
+				if(progress == 100){
+					GUIFinished();
+				}
 			}
 
 			is.close();
 			os.close();
 			
-			GUIModifyFinishedCopy();
+			
 			
 		}catch(FileNotFoundException e){
-			GUIModifyFinishedCopy();
-			schmitter.getProgressBar().setForeground(Color.RED);
-			schmitter.getProgressBar().setIndeterminate(true);
-			progBar.setString("File not found!");
+			e.printStackTrace();
 		}		
 		catch (Exception e) {
 			e.printStackTrace();
