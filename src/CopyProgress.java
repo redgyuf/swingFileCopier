@@ -26,9 +26,6 @@ public class CopyProgress {
 	private GroupLayout gl_p;
 	private int numOfCopies = 0;
 	
-	private float widthRatio = 1;
-	private float heightRatio = 1;
-	
 	private List<JLabel> jlabels = new ArrayList<>();
 	private List<JProgressBar> jprogbars = new ArrayList<>();
 	private List<JButton> jbuttons = new ArrayList<>();
@@ -41,20 +38,20 @@ public class CopyProgress {
 	public JProgressBar addCopyProgresses(FileCopy copy) {
 		JLabel lblNewLabel = new JLabel();
 		jlabels.add(lblNewLabel);
-		lblNewLabel.setBounds(10, 10+(numOfCopies*70), (int) (455*widthRatio), 15);
+		lblNewLabel.setBounds(10, 10+(numOfCopies*70), frame.getWidth()-65, 15);
 		lblNewLabel.setText(copy.getFrom().getAbsolutePath());
 		p.add(lblNewLabel);
 		
 		JProgressBar progressBar = new JProgressBar(0,100);
 		jprogbars.add(progressBar);
-		progressBar.setBounds(10, 35+(numOfCopies*70), (int) (365*widthRatio), 25);
+		progressBar.setBounds(10, 35+(numOfCopies*70), frame.getWidth()-155, 25);
 		progressBar.setStringPainted(true);
 		progressBar.setForeground(Color.ORANGE);
 		p.add(progressBar);
 		
 		JButton btnStop = new JButton("Stop");
 		jbuttons.add(btnStop);
-		btnStop.setBounds((int) (365*widthRatio)+20, 35+(numOfCopies*70), (int) (89*widthRatio), 25);
+		btnStop.setBounds(frame.getWidth()-135, 35+(numOfCopies*70), 90, 25);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				copy.cancel(true);
@@ -66,7 +63,7 @@ public class CopyProgress {
 		
 		JSeparator separator = new JSeparator();
 		jseparators.add(separator);
-		separator.setBounds(10, 70+(numOfCopies*70), 465, 2);
+		separator.setBounds(10, 70+(numOfCopies*70), frame.getWidth()-55, 2);
 		p.add(separator);
 		
 		numOfCopies += 1;
@@ -78,37 +75,42 @@ public class CopyProgress {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setSize(520, 200);
-		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(frame.HIDE_ON_CLOSE);
 		
 		frame.addComponentListener(new ComponentAdapter() 
 		{  
 		        public void componentResized(ComponentEvent evt) {
-		            Component c = (Component)evt.getSource();
-		            heightRatio = (float) frame.getHeight() / 200;
-		            widthRatio = (float) frame.getWidth() / 520;
+		            Component c = (Component)evt.getSource();		            
+	            	gl_p.setVerticalGroup(gl_p.createParallelGroup(Alignment.LEADING).addGap(0, numOfCopies*70, Short.MAX_VALUE));
+		            
+		            
 		            int i = 0;
 		            for (JLabel jlabel : jlabels) {
-		            	jlabel.setBounds(10, 10+(i*70), (int) (455*widthRatio), 14);
+		            	jlabel.setBounds(10, 10+(i*70), frame.getWidth()-65, 14);
 		            	i += 1;
 					}
 		            
 		            i = 0;
 		            for (JProgressBar jprogbar : jprogbars) {
-		            	jprogbar.setBounds(10, 35+(i*70), (int) (365*widthRatio), 23);
+		            	jprogbar.setBounds(10, 35+(i*70), frame.getWidth()-155, 23);
 		            	i += 1;
 					}
 		            
 		            i = 0;
 		            for (JButton jButton : jbuttons) {
-						jButton.setBounds((int) (365*widthRatio)+20, 35+(i*70), (int) (89*widthRatio), 23);
+						jButton.setBounds(frame.getWidth()-135, 35+(i*70), 90, 23);
 						i += 1;
 					}
 		            
 		            i = 0;
 		            for (JSeparator jSeparator : jseparators) {
-						jSeparator.setBounds(10, 70+(i*70), (int) (465*widthRatio), 2);
+						jSeparator.setBounds(10, 70+(i*70), frame.getWidth()-55, 2);
 						i += 1;
 					}
+		            
+		            
+		            
+		            
 		        }
 		});
 
